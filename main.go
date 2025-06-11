@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log/slog"
 
 	"github.com/andreasgerstmayr/tempo-mcp-server/pkg/resources"
@@ -29,6 +28,6 @@ func main() {
 
 	err := server.ServeStdio(mcpServer)
 	if err != nil {
-		fmt.Printf("Server error: %v\n", err)
+		slog.Error("Server error", "error", err)
 	}
 }

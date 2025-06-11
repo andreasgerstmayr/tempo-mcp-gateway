@@ -10,7 +10,7 @@ import (
 
 func QueryTraceById(tempoClient *tempo.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	return mcp.NewTool(
-			"query_trace_by_id",
+			"queryTraceByTraceId",
 			mcp.WithDescription("Query a trace by trace ID"),
 			mcp.WithString("traceid",
 				mcp.Required(),

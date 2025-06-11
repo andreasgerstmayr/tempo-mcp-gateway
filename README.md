@@ -8,13 +8,14 @@ A Proof of Concept for a MCP (Model Context Protocol) server for Grafana Tempo.
 
 ## Example Prompts
 ```
-search for traces using this query: { status = error }
+Search for traces which contain errors.
+Use the tool and print a table with all trace IDs, root service name, root span name and duration.
 ```
 
 ```
-show me the trace e4280736b13ed0b2098fdd9f5f465e0b
+Show me the trace e4280736b13ed0b2098fdd9f5f465e0b.
 ```
 
 ```
-show me the status of tempo
+Show me the status of tempo.
 ```

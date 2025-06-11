@@ -10,7 +10,7 @@ import (
 
 func ShowStatus(tempoClient *tempo.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	return mcp.NewTool(
-			"show_status",
+			"showStatus",
 			mcp.WithDescription("Show the status of all Tempo services"),
 		),
 		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
