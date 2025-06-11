@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "tempo-mcp": {
+      "command": "/home/agerstmayr/redhat/dev/tempo-mcp-server/tempo-mcp-server",
+      "args": [
+        "--tempo-api-url",
+        "http://localhost:3200"
+      ],
+    }
+  }
+}
