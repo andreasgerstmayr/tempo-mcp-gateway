@@ -1,0 +1,8 @@
+# TOOD: query Kubernetes API for TempoStack and TempoMonolithic instances
+- name: my-tempo1
+  endpoint: http://localhost:3200/api/mcp
+- name: my-multitenant-tempo2
+  endpoint: http://localhost:3200/api/mcp
+  tenants:
+  - corp1
+  - corp2
