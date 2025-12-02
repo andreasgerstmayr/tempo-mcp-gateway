@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+rules:
+- apiGroups: ["tempo.grafana.com"]
+  resources: ["tempostacks", "tempomonolithics"]
+  verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tempo-mcp-gateway
+subjects:
+- kind: ServiceAccount
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+roleRef:
+  kind: ClusterRole
+  name: tempo-mcp-gateway
+  apiGroup: rbac.authorization.k8s.io

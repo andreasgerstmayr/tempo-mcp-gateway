@@ -1,1 +1,5 @@
 /tempo-mcp-gateway
+
+
+# Ignore DevSpace cache and log folder
+.devspace/

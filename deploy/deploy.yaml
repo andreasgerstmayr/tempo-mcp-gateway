@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo-mcp-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tempo-mcp-gateway
+    spec:
+      containers:
+      - name: tempo-mcp-gateway
+        image: quay.io/agerstmayr/tempo-mcp-gateway:latest
+      serviceAccountName: tempo-mcp-gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+spec:
+  selector:
+    app.kubernetes.io/name: tempo-mcp-gateway
+  ports:
+  - name: http
+    port: 8080
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: tempo-mcp-gateway
+  namespace: openshift-tracing
+spec:
+  #host: tempo-mcp-gateway-openshift-tracing.apps-crc.testing
+  to:
+    kind: Service
+    name: tempo-mcp-gateway
+  port:
+    targetPort: http

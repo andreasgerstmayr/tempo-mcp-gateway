@@ -1,0 +1,33 @@
+version: v2beta1
+name: tempo-mcp-gatewaygit
+
+# This is a list of `pipelines` that DevSpace can execute (you can define your own)
+pipelines:
+  # This is the pipeline for the main command: `devspace dev` (or `devspace run-pipeline dev`)
+  dev:
+    run: |-
+      create_deployments --all
+      start_dev app
+
+
+# This is a list of `deployments` that DevSpace can create for this project
+deployments:
+  app:
+    # This deployment uses `kubectl` but you can also define `helm` deployments
+    kubectl:
+      manifests:
+        - deploy/**
+
+# This is a list of `dev` containers that are based on the containers created by your deployments
+dev:
+  app:
+    # Search for the container that runs this image
+    labelSelector:
+      app.kubernetes.io/name: tempo-mcp-gateway
+    # Replace the container image with this dev-optimized image (allows to skip image building during development)
+    devImage: quay.io/agerstmayr/tempo-mcp-gateway-dev:4
+    # Sync files between the local filesystem and the development container
+    sync:
+    - path: ./:/workspace
+    terminal:
+      command: ./devspace_start.sh
