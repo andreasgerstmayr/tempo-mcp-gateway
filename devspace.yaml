@@ -29,5 +29,4 @@ dev:
     # Sync files between the local filesystem and the development container
     sync:
     - path: ./:/workspace
-    terminal:
-      command: ./devspace_start.sh
+    terminal: {}

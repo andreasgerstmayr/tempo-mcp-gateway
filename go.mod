@@ -3,7 +3,7 @@ module github.com/andreasgerstmayr/tempo-mcp-gateway
 go 1.24.10
 
 require (
-	github.com/grafana/tempo-operator v0.19.0
+	github.com/grafana/tempo-operator v0.19.1-0.20251215134321-8165a9c73346
 	github.com/jsternberg/zap-logfmt v1.3.0
 	github.com/mark3labs/mcp-go v0.43.2
 	github.com/openshift/library-go v0.0.0-20230620084201-504ca4bd5a83

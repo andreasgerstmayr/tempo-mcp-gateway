@@ -180,6 +180,20 @@ func (s *MCPServer) registerProxiedTool(tool mcp.Tool) {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 
+		if !instance.MCPEnabled {
+			var specField string
+			switch instance.Kind {
+			case tempodiscovery.KindTempoStack:
+				specField = ".spec.template.queryFrontend.mcpServer.enabled"
+			case tempodiscovery.KindTempoMonolithic:
+				specField = ".spec.query.mcpServer.enabled"
+			}
+
+			msg := fmt.Sprintf("the MCP server is disabled for this instance. To enable it, set the field %s to true in the %s/%s %s instance",
+				specField, instance.Namespace, instance.Name, instance.Kind)
+			return mcp.NewToolResultError(msg), nil
+		}
+
 		var tenantName string
 		if instance.Multitenancy {
 			tenantName, err = request.RequireString("tenant")

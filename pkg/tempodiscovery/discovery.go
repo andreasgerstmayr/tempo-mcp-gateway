@@ -39,6 +39,7 @@ type TempoInstance struct {
 	Name      string   `json:"tempoName"`
 	// This field is technically redundant, but useful for LLMs.
 	Multitenancy bool `json:"multiTenancy"`
+	MCPEnabled   bool `json:"mcpEnabled"`
 	// A list of tenant names for multi-tenant instances, or an empty list for single-tenant instances.
 	Tenants []string `json:"tenants,omitempty"`
 	Status  string   `json:"status"`
@@ -112,6 +113,7 @@ func (d *TempoDiscovery) listTempoStacks(ctx context.Context) ([]TempoInstance, 
 			Namespace:    tempo.Namespace,
 			Name:         tempo.Name,
 			Multitenancy: len(tenants) > 0,
+			MCPEnabled:   tempo.Spec.Template.QueryFrontend.MCPServer.Enabled,
 			Tenants:      tenants,
 			Status:       status,
 		}
@@ -144,11 +146,17 @@ func (d *TempoDiscovery) listTempoMonolithics(ctx context.Context) ([]TempoInsta
 			}
 		}
 
+		mcpEnabled := false
+		if tempo.Spec.Query != nil && tempo.Spec.Query.MCPServer != nil {
+			mcpEnabled = tempo.Spec.Query.MCPServer.Enabled
+		}
+
 		instances[i] = TempoInstance{
 			Kind:         KindTempoMonolithic,
 			Namespace:    tempo.Namespace,
 			Name:         tempo.Name,
 			Multitenancy: len(tenants) > 0,
+			MCPEnabled:   mcpEnabled,
 			Tenants:      tenants,
 			Status:       status,
 		}
@@ -223,6 +231,7 @@ func (d *TempoDiscovery) listTempoMonolithics(ctx context.Context) ([]TempoInsta
 func (d *TempoDiscovery) filterAccessibleInstancesGateway(ctx context.Context, auth Authentication, instances []TempoInstance, verbs []string) ([]TempoInstance, error) {
 	globallyAccessibleTenants := map[string]bool{}
 
+	// Send an access probe to the first Tempo instance.
 	for _, instance := range instances {
 		for _, tenant := range instance.Tenants {
 			_, ok := globallyAccessibleTenants[tenant]
@@ -264,6 +273,11 @@ func (d *TempoDiscovery) filterAccessibleInstancesGateway(ctx context.Context, a
 	return filtered, nil
 }
 
+// Check access to a tenant by probing the Tempo readyness endpoint.
+// If the gateway does not return 403 Forbidden, access to this tenant is allowed.
+//
+// Do not perform a SubjectAccessReview here, because the gateway can have additional access rules (for example -opa.admin-groups) configured,
+// or use OIDC for authentication.
 func (d *TempoDiscovery) checkAccess(ctx context.Context, auth Authentication, instance TempoInstance, tenant string) (bool, error) {
 	url := fmt.Sprintf("%s/ready", instance.GetEndpoint(tenant))
 	log := d.logger.WithOptions(zap.Fields(
